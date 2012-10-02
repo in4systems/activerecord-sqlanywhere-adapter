@@ -46,6 +46,15 @@ module Arel
       def visit_Arel_Nodes_False o
         "1=0"
       end
+      
+      def visit_Arel_Nodes_Matches o
+        # The version in arel cannot like integer columns
+        left = visit o.left # This method sets last column
+        # If last column was left, visit o.right would return 0
+        self.last_column = nil
+        "#{left} LIKE #{visit o.right}"
+      end
+      
 
 
   def using_distinct?(o)

@@ -776,7 +776,10 @@ SQL
             # Removing whitespace from the ends of all strings fixes this. It is a hack however, so I'm open
             # for suggestions on coming up with a better method.
             #
-            value = value.gsub(/ +$/, "")
+            begin
+              value = value.rstrip
+            rescue ArgumentError # invalid byte sequence in UTF-8
+            end
           else
             value
           end

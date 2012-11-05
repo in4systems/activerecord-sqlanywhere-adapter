@@ -1,3 +1,4 @@
+#encoding: utf-8
 #====================================================
 #
 #    Copyright 2008-2010 iAnywhere Solutions, Inc.
@@ -613,6 +614,7 @@ FROM
   INNER JOIN SYS.SYSTABLE ON SYS.SYSCOLUMN.table_id = SYS.SYSTABLE.table_id 
   INNER JOIN SYS.SYSDOMAIN ON SYS.SYSCOLUMN.domain_id = SYS.SYSDOMAIN.domain_id
 WHERE
+  SYS.SYSTABLE.creator = 1 AND
   table_name = '#{table_name}'
 SQL
           structure = exec_query(sql, :skip_logging)
@@ -764,7 +766,8 @@ SQL
             BigDecimal.new(value)
           when 448,452,456,460,640  # DT_VARCHAR, DT_FIXCHAR, DT_LONGVARCHAR, DT_STRING, DT_LONGNVARCHAR
             # hack, not sure how to manage proper encoding
-            value = value.force_encoding(ActiveRecord::Base.connection_config['encoding'] || "UTF-8")
+            value = value.force_encoding(ActiveRecord::Base.connection_config['encoding'] || 'UTF-8')
+            value = value.encode('UTF-8')
             # Why am I removing the whitespace from the end of the string?
             #
             # Sqlanywhere allowed us to create a string foreign key.

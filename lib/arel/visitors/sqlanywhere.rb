@@ -36,7 +36,9 @@ module Arel
 
       def visit_Arel_Nodes_Group o
         expr = o.expr.clone
-        expr.alias = nil
+        if expr.class == Arel::Nodes::NamedFunction
+          expr.alias = nil
+        end
         visit expr
       end
 

@@ -34,6 +34,11 @@ module Arel
         ].compact.join ' '
       end
 
+      def visit_Arel_Nodes_Group o
+        expr = o.expr.clone
+        expr.alias = nil
+        visit expr
+      end
 
       def visit_Arel_Nodes_Offset o
         "START AT #{visit(o.expr) + 1}"

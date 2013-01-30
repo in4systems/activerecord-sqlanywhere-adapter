@@ -663,7 +663,7 @@ SQL
               result, bind_param = SA.instance.api.sqlany_describe_bind_param(stmt, i)
               sqlanywhere_error_test(sql) if result==0
               
-              bind_param.set_direction(:input)
+              bind_param.set_direction(1) # https://github.com/sqlanywhere/sqlanywhere/blob/master/ext/sacapi.h#L175
               if bind_value.nil?
                 bind_param.set_value(nil)
               elsif bind_type == :datetime
@@ -762,9 +762,9 @@ SQL
         def native_type_to_ruby_type(native_type, value)
           return nil if value.nil?
           case native_type
-          when :decimal # (also and more importantly numeric)
+          when 484 # DT_DECIMAL (also and more importantly numeric)
             BigDecimal.new(value)
-          when :var_char, :fix_char, :long_var_char, :string, :long_n_var_char
+          when 448,452,456,460,640  # DT_VARCHAR, DT_FIXCHAR, DT_LONGVARCHAR, DT_STRING, DT_LONGNVARCHAR
             # hack, not sure how to manage proper encoding
             value = value.force_encoding(ActiveRecord::Base.connection_config['encoding'] || 'UTF-8')
             value = value.encode('UTF-8')

@@ -364,6 +364,10 @@ module ActiveRecord
         end
       end
 	  
+      def last_inserted_id(result)
+        select_value('SELECT @@identity')
+      end
+
       protected
       
         def list_of_tables(types, name = nil)

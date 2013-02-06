@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
     "LICENSE",
     "README",
     "test/connection.rb",
-    "lib/active_record/connection_adapters/sqlanywhere_adapter.rb",
+    "lib/active_record/connection_adapters/sqlanywhere_jdbc_in4systems_adapter.rb",
     "lib/arel/visitors/sqlanywhere.rb",
   ]
   s.executables = []

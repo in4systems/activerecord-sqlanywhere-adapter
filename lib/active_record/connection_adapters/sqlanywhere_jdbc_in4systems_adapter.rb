@@ -59,7 +59,7 @@ module ActiveRecord
       end
 
       url = 'jdbc:sqlanywhere:' + connection_string
-      
+
       if ENV["SQLANY12"]
         $CLASSPATH << Pathname.new(ENV["SQLANY12"]).join('java').join('sajdbc4.jar').to_s
         driver = 'sybase.jdbc4.sqlanywhere.IDriver'
@@ -70,17 +70,17 @@ module ActiveRecord
         raise "Cannot find SqlAnywhere11 or 12 installation directory"
       end
 
-      ActiveRecord::Base.jdbc_connection({
-        :adapter => 'jdbc',
-        :driver => driver,
-        :url => url
-        })
-      
-      ConnectionAdapters::SQLAnywhereJdbcIn4systemsAdapter.new( logger, connection_string)
+      conn = ActiveRecord::Base.jdbc_connection({adapter: 'jdbc', driver: driver, url: url})
+
+      ConnectionAdapters::SQLAnywhereJdbcIn4systemsAdapter.new( conn, logger, connection_string)
     end
   end
 
   module ConnectionAdapters
+    class JdbcTypeConverter
+      AR_TO_JDBC_TYPES[:text] << lambda {|r| r['type_name'] =~ /^long varchar$/i}
+    end
+
     class SQLAnywhereException < StandardError
       attr_reader :errno
       attr_reader :sql
@@ -140,8 +140,13 @@ module ActiveRecord
     end
     
     class SQLAnywhereJdbcIn4systemsAdapter < AbstractAdapter
-      def initialize( logger, connection_string = "") #:nodoc:
+      delegate :select, :exec_query, to: :conn
+
+      attr_reader :conn
+      def initialize( conn, logger, connection_string = "") #:nodoc:
+        super
         @visitor = Arel::Visitors::SQLAnywhere.new self
+        @conn = conn
       end
       
       def self.visitor_for(pool)

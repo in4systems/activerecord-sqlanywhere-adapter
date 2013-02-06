@@ -140,7 +140,7 @@ module ActiveRecord
     end
     
     class SQLAnywhereJdbcIn4systemsAdapter < AbstractAdapter
-      delegate :select, :exec_query, to: :conn
+      delegate :select, to: :conn
 
       attr_reader :conn
       def initialize( conn, logger, connection_string = "") #:nodoc:
@@ -363,7 +363,24 @@ module ActiveRecord
           execute "ALTER TABLE #{quote_table_name(table_name)} DROP #{column_name}"
         end
       end
-	  
+
+      def exec_query(sql, name = 'SQL', binds = [])
+        binds.map! do |column, value|
+          type = column.type
+          if value != nil
+            case type
+            when :boolean
+              [column, value ? 1 : 0]
+            else
+              [column, value]
+            end
+          else
+            [column, value]
+          end
+        end
+        conn.exec_query(sql, name, binds)
+      end
+
       def last_inserted_id(result)
         select_value('SELECT @@identity')
       end

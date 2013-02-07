@@ -60,11 +60,11 @@ module ActiveRecord
 
       url = 'jdbc:sqlanywhere:' + connection_string
 
-      if ENV["SQLANY12"]
-        $CLASSPATH << Pathname.new(ENV["SQLANY12"]).join('java').join('sajdbc4.jar').to_s
+      if ENV["SQLANY12"] || Pathname.new('/opt/sqlanywhere12/java/sajdbc4.jar').exist?
+        $CLASSPATH << Pathname.new(ENV["SQLANY12"] || '/opt/sqlanywhere12/').join('java').join('sajdbc4.jar').to_s
         driver = 'sybase.jdbc4.sqlanywhere.IDriver'
-      elsif ENV["SQLANY11"]
-        $CLASSPATH << Pathname.new(ENV["SQLANY11"]).join('java').join('sajdbc.jar').to_s
+      elsif ENV["SQLANY11"] || Pathname.new('/opt/sqlanywhere11/java/sajdbc.jar').exist?
+        $CLASSPATH << Pathname.new(ENV["SQLANY11"] || '/opt/sqlanywhere11/').join('java').join('sajdbc.jar').to_s
         driver = 'sybase.jdbc.sqlanywhere.IDriver'
       else
         raise "Cannot find SqlAnywhere11 or 12 installation directory"

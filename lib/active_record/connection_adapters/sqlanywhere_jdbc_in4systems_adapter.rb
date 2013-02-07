@@ -140,7 +140,7 @@ module ActiveRecord
     end
     
     class SQLAnywhereJdbcIn4systemsAdapter < AbstractAdapter
-      delegate :select, :select_rows, to: :conn
+      delegate :select, :select_rows, :execute, to: :conn
 
       attr_reader :conn
       def initialize( conn, logger, connection_string = "") #:nodoc:

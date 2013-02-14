@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{activerecord-sqlanywhere-adapter-in4systems}
-  s.version = "1.0.2"
+  s.version = "1.0.3"
 
   s.authors = ['Eric Farar', 'Chris Couzens']
   s.description = %q{ActiveRecord driver for SQL Anywhere customized for in4systems}
@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.require_paths = [%q{lib}]
   s.summary = %q{ActiveRecord driver for SQL Anywhere}
   s.platform = Gem::Platform::RUBY
-  s.add_dependency 'sqlanywhere-ffi', '>=1.0.0'
+  s.add_dependency 'sqlanywhere', '>=0.1.5'
   s.add_dependency 'activerecord', '>= 3.0.3'
 end
 

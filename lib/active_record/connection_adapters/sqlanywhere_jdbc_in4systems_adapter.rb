@@ -217,6 +217,20 @@ module ActiveRecord
         %Q("#{name}")
       end
 
+      def quote_table_name(name)
+        owner, table = name.to_s.split('.', 2)
+        if table == nil
+          table = owner
+          owner = :dba
+        end
+        "#{quote_column_name(owner)}.#{quote_column_name(table)}"
+      end
+
+      def quote_table_alias_name(name)
+        quote_column_name name
+      end
+
+
       # Handles special quoting of binary columns. Binary columns will be treated as strings inside of ActiveRecord.
       # ActiveRecord requires that any strings it inserts into databases must escape the backslash (\).
       # Since in the binary case, the (\x) is significant to SQL Anywhere, it cannot be escaped.

@@ -1,6 +1,11 @@
 module Arel
   module Visitors
     class SQLAnywhere < Arel::Visitors::ToSql
+      def initialize connection
+        super
+        @quoted_table_aliases = {}
+      end
+
       private
         def visit_Arel_Nodes_SelectStatement o
     o = order_hacks(o)
@@ -61,6 +66,31 @@ module Arel
         self.last_column = nil
         "#{left} LIKE #{visit o.right}"
       end
+
+      def visit_Arel_Table o, a=nil
+        if o.table_alias
+          "#{quote_table_name o.name} #{quote_table_alias_name o.table_alias}"
+        else
+          quote_table_name o.name
+        end
+      end
+
+      def visit_Arel_Attributes_Attribute o, a=nil
+        if o.relation.table_alias
+          join_name = o.relation.table_alias
+          "#{quote_table_alias_name join_name}.#{quote_column_name o.name}"
+        else
+          join_name = o.relation.name
+          "#{quote_table_name join_name}.#{quote_column_name o.name}"
+        end
+      end
+
+      def quote_table_alias_name name
+        return name if Arel::Nodes::SqlLiteral === name
+        @quoted_table_aliases[name] ||= @connection.quote_table_alias_name(name)
+      end
+
+
 
 
 

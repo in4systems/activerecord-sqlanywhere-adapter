@@ -6,7 +6,7 @@ module Arel
     o = order_hacks(o)
 
     is_distinct = using_distinct?(o)
-    
+
     o.limit = 1000000 if (o.offset && !o.limit)
     o.limit = o.limit.expr if(o.limit.is_a?(Arel::Nodes::Limit))
     o.limit = o.limit if(o.limit.is_a?(Fixnum))
@@ -45,15 +45,15 @@ module Arel
       def visit_Arel_Nodes_Offset o
         "START AT #{visit(o.expr) + 1}"
       end
-      
+
       def visit_Arel_Nodes_True o
         "1=1"
       end
-      
+
       def visit_Arel_Nodes_False o
         "1=0"
       end
-      
+
       def visit_Arel_Nodes_Matches o
         # The version in arel cannot like integer columns
         left = visit o.left # This method sets last column
@@ -61,14 +61,14 @@ module Arel
         self.last_column = nil
         "#{left} LIKE #{visit o.right}"
       end
-      
+
 
 
   def using_distinct?(o)
     o.cores.any? do |core|
       core.set_quantifier.class == Arel::Nodes::Distinct
     end
-  end      
+  end
 
       # The functions (order_hacks, split_order_string) are based on the Oracle Enhacned ActiveRecord driver maintained by Raimonds Simanovskis (2010)
       # (https://github.com/rsim/oracle-enhanced)

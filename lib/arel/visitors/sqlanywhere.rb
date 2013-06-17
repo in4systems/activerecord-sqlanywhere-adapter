@@ -67,6 +67,10 @@ module Arel
         "#{left} LIKE #{visit o.right}"
       end
 
+      def visit_Arel_Nodes_TableAlias o
+        "#{visit o.relation} #{quote_table_alias_name o.name}"
+      end
+
       def visit_Arel_Table o, a=nil
         if o.table_alias
           "#{quote_table_name o.name} #{quote_table_alias_name o.table_alias}"

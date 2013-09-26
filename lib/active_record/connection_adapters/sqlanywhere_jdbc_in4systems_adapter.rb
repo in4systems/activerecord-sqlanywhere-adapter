@@ -302,7 +302,15 @@ module ActiveRecord
 
       def columns(table_name, name = nil) #:nodoc:
         table_structure(table_name).map do |field|
-          SQLAnywhereColumn.new(field['name'], field['default'], field['domain'], (field['nulls'] == 1))
+          default = field['default']
+          if default == nil # Nil is the usual case
+          elsif default.starts_with?("'") # If string, remove first and last quotes and the last \n character
+            default = default[1..-2]
+          elsif default =~ /^-?\d+(\.\d+)?$/ # If a number string, leave as it is
+          else # Otherwise, it's probably something (LAST USER, CURRENT TIMESTAMP, etc) that wouldn't work in Rails, so return nil
+            default = nil
+          end
+          SQLAnywhereColumn.new(field['name'], default, field['domain'], (field['nulls'] == 1))
         end
       end
 
@@ -415,9 +423,7 @@ module ActiveRecord
         def table_structure(table_name)
           sql = <<-SQL
 SELECT SYS.SYSCOLUMN.column_name AS name,
-  if left("default",1)='''' then substring("default", 2, length("default")-2) // remove the surrounding quotes
-  else NULLIF(SYS.SYSCOLUMN."default", 'autoincrement')
-  endif AS "default",
+  "default" AS "default",
   IF SYS.SYSCOLUMN.domain_id IN (7,8,9,11,33,34,35,3,27) THEN
     IF SYS.SYSCOLUMN.domain_id IN (3,27) THEN
       SYS.SYSDOMAIN.domain_name || '(' || SYS.SYSCOLUMN.width || ',' || SYS.SYSCOLUMN.scale || ')'

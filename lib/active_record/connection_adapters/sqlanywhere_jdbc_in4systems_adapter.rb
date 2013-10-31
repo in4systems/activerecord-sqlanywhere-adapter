@@ -406,6 +406,27 @@ module ActiveRecord
         select_value('SELECT @@identity')
       end
 
+      def select_user(cache=true)
+        @user_id = (cache && @user_id) || select_value('SELECT USER')
+      end
+
+      # Set the database user to be user_id.
+      # If a block is given, then after running the block, the previous user_id is restored.
+      def set_user(user_id)
+        previous_user_id = select_user(true)
+        if previous_user_id != user_id
+          execute("SETUSER #{quote_column_name(user_id)}")
+          @user_id = user_id
+        end
+        if block_given?
+          begin
+            yield
+          ensure
+            set_user(previous_user_id)
+          end
+        end
+      end
+
       protected
 
         def list_of_tables(types, name = nil)

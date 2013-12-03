@@ -462,6 +462,7 @@ FROM
 WHERE
   SYS.SYSTABLE.creator = 1 AND
   table_name = '#{table_name}'
+ORDER BY SYS.SYSCOLUMN.colno
 SQL
           structure = exec_query(sql, :skip_logging)
           raise(ActiveRecord::StatementInvalid, "Could not find table '#{table_name}'") if structure == false

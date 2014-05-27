@@ -459,10 +459,9 @@ FROM
   SYS.SYSCOLUMN
   INNER JOIN SYS.SYSTABLE ON SYS.SYSCOLUMN.table_id = SYS.SYSTABLE.table_id
   INNER JOIN SYS.SYSDOMAIN ON SYS.SYSCOLUMN.domain_id = SYS.SYSDOMAIN.domain_id
+ INNER JOIN sys.sysUser ON sys.systable.creator = sys.sysuser.user_id AND sys.sysuser.user_name = 'dba'
 WHERE
-  SYS.SYSTABLE.creator = 1 AND
   table_name = '#{table_name}'
-ORDER BY SYS.SYSCOLUMN.colno
 SQL
           structure = exec_query(sql, :skip_logging)
           raise(ActiveRecord::StatementInvalid, "Could not find table '#{table_name}'") if structure == false

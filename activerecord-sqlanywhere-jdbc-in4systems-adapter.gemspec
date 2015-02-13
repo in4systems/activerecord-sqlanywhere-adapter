@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.name = %q{activerecord-sqlanywhere-jdbc-in4systems-adapter}
-  s.version = "1.0.11"
+  s.version = "1.0.13"
 
-  s.authors = ['Eric Farar', 'Chris Couzens']
+  s.authors = ['Eric Farar', 'Sri Kalai']
   s.description = %q{ActiveRecord JDBC driver for SQL Anywhere customized for in4systems}
-  s.email = %q{chris.couzens@in4systems.com}
+  s.email = %q{support@in4systems.com}
   s.files = [
     "CHANGELOG",
     "LICENSE",
